@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import {
   Instagram,
   X,
@@ -17,7 +18,6 @@ import { faTiktok } from "@fortawesome/free-brands-svg-icons";
 
 const CourtCreativesWebsite = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [minDate, setMinDate] = useState("");
   const [formData, setFormData] = useState({
@@ -271,7 +271,6 @@ const CourtCreativesWebsite = () => {
           receptionLocation: "",
           additionalDetails: "",
         });
-        setIsChatOpen(false);
       } else {
         alert("There was an error submitting your form. Please try again.");
       }
@@ -300,11 +299,14 @@ const CourtCreativesWebsite = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center">
-              <img
+              <Image
                 src="/logo.png"
                 alt="CourtCreatives Logo"
+                width={112}
+                height={112}
                 className="h-28 w-auto cursor-pointer"
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                priority
               />
             </div>
 
@@ -404,7 +406,7 @@ const CourtCreativesWebsite = () => {
                 About Me
               </h2>
               <p className="text-lg text-gray-600 mb-4 leading-relaxed">
-                Hi, I'm Courtney.
+                Hi, I&apos;m Courtney.
               </p>
               <p className="text-lg text-gray-600 mb-4 leading-relaxed">
                 A passionate wedding content creator based in Northern Ireland,
@@ -414,8 +416,8 @@ const CourtCreativesWebsite = () => {
               <p className="text-lg text-gray-600 mb-4 leading-relaxed">
                 With years of experience in content creation across Northern
                 Ireland, I specialise in creating stunning visual stories
-                perfect for social media that you'll treasure forever. From
-                intimate ceremonies to grand celebrations, I'm here to document
+                perfect for social media that you&apos;ll treasure forever. From
+                intimate ceremonies to grand celebrations, I&apos;m here to document
                 every precious moment.
               </p>
               <p className="text-lg text-gray-600 leading-relaxed">
@@ -425,10 +427,11 @@ const CourtCreativesWebsite = () => {
               </p>
             </div>
             <div className="relative h-[500px] bg-gray-200 rounded-lg overflow-hidden shadow-xl">
-              <img
+              <Image
                 src="/aboutme.jpg"
                 alt="Wedding content creator Northern Ireland"
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
               />
             </div>
           </div>
@@ -442,9 +445,11 @@ const CourtCreativesWebsite = () => {
             Packages
           </h2>
           <div className="flex justify-center">
-            <img
+            <Image
               src="/packages.png"
               alt="Wedding Packages"
+              width={1024}
+              height={768}
               className="w-full max-w-4xl h-auto"
             />
           </div>
@@ -660,7 +665,7 @@ const CourtCreativesWebsite = () => {
                 </div>
                 <div>
                   <label className="block text-gray-700 mb-2 font-normal">
-                    Partner's Name
+                    Partner&apos;s Name
                   </label>
                   <input
                     type="text"
@@ -840,7 +845,7 @@ const CourtCreativesWebsite = () => {
                 Thank You!
               </h3>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                Your enquiry has been successfully submitted. We'll get back to
+                Your enquiry has been successfully submitted. We&apos;ll get back to
                 you within 24-48 hours.
               </p>
               <button
