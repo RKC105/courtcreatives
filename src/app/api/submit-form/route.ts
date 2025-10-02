@@ -27,13 +27,6 @@ export async function POST(request: Request) {
         from: 'CourtCreatives <onboarding@resend.dev>',
         to: ['courtcreatives@outlook.com'],
         subject: 'Court Creatives Enquiry Form',
-        attachments: [
-          {
-            filename: 'logo_withbg.png',
-            content: logoBase64,
-            cid: 'logo',
-          },
-        ],
         html: `
           <!DOCTYPE html>
           <html>
@@ -108,7 +101,7 @@ export async function POST(request: Request) {
             <body>
               <div class="container">
                 <div class="header">
-                  <img src="cid:logo" alt="CourtCreatives Logo" />
+                  <img src="data:image/png;base64,${logoBase64}" alt="CourtCreatives Logo" />
                 </div>
                 <div class="content">
                   <h1>New Wedding Enquiry Received</h1>
