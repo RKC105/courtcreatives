@@ -350,9 +350,9 @@ const CourtCreativesWebsite = () => {
 
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="md:hidden p-2 cursor-pointer"
+                className="md:hidden p-2 cursor-pointer text-gray-800"
               >
-                {isMenuOpen ? <X /> : <Menu />}
+                {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
             </div>
           </div>
