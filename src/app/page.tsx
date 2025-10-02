@@ -428,7 +428,7 @@ const CourtCreativesWebsite = () => {
             </div>
             <div className="relative h-[500px] bg-gray-200 rounded-lg overflow-hidden shadow-xl">
               <Image
-                src="/aboutme.jpg"
+                src="/aboutme.JPG"
                 alt="Wedding content creator Northern Ireland"
                 fill
                 className="object-cover"
