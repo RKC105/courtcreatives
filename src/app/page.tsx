@@ -619,8 +619,14 @@ const CourtCreativesWebsite = () => {
                   key={index}
                   className="relative h-64 bg-gray-200 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group"
                 >
-                  <video controls className="w-full h-full object-cover" preload="metadata">
-                    <source src={item.src} type="video/mp4" />
+                  <video
+                    controls
+                    className="w-full h-full object-cover"
+                    preload="metadata"
+                    playsInline
+                    muted
+                  >
+                    <source src={`${item.src}#t=0.1`} type="video/mp4" />
                     Your browser does not support the video tag.
                   </video>
                 </div>
