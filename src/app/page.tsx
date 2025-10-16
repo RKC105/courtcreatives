@@ -178,32 +178,43 @@ const CourtCreativesWebsite = () => {
       "@context": "https://schema.org",
       "@type": "ProfessionalService",
       name: "CourtCreatives",
+      alternateName: "Court Creatives Wedding Content Creator",
       description:
-        "Professional wedding content creator in Northern Ireland specialising in TikTok, Instagram reels, and cinematic wedding videos",
+        "Professional wedding content creator in Northern Ireland and Belfast specialising in TikTok, Instagram reels, and cinematic wedding videos",
       url: "https://courtcreativesni.com",
       logo: "https://courtcreativesni.com/logo.png",
       image: "https://courtcreativesni.com/logo.png",
       telephone: "",
       address: {
         "@type": "PostalAddress",
+        addressLocality: "Belfast",
         addressRegion: "Northern Ireland",
         addressCountry: "GB",
       },
       geo: {
         "@type": "GeoCoordinates",
+        latitude: "54.5973",
+        longitude: "-5.9301",
         addressCountry: "GB",
       },
       sameAs: [
         "https://www.instagram.com/courtcreatives_/",
         "https://www.tiktok.com/@courtcreatives_",
       ],
-      priceRange: "$",
-      areaServed: {
-        "@type": "State",
-        name: "Northern Ireland",
-      },
+      priceRange: "$$",
+      areaServed: [
+        {
+          "@type": "City",
+          name: "Belfast",
+        },
+        {
+          "@type": "State",
+          name: "Northern Ireland",
+        },
+      ],
       serviceType: [
         "Wedding Content Creation",
+        "Wedding Content Creator",
         "Wedding Videography",
         "Social Media Content",
         "TikTok Videos",
@@ -381,11 +392,11 @@ const CourtCreativesWebsite = () => {
       <section className="pt-32 pb-20 px-4">
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight font-[family-name:var(--font-tangerine)] text-gray-800">
-            Capturing Your <span className="text-[#f8ced0]">Love Story</span>
+            Wedding Content Creator <span className="text-[#f8ced0]">Northern Ireland</span>
           </h1>
           <p className="text-xl md:text-2xl text-gray-600 mb-8 font-light max-w-3xl mx-auto">
-            Professional wedding content creator in Northern Ireland
-            specialising in stunning TikTok videos, Instagram reels, and
+            Professional wedding content creator serving Belfast, Northern Ireland, and beyond.
+            Specialising in stunning TikTok videos, Instagram reels, and
             cinematic wedding content that brings your special day to life
           </p>
           <button
@@ -409,27 +420,27 @@ const CourtCreativesWebsite = () => {
                 Hi, I&apos;m Courtney.
               </p>
               <p className="text-lg text-gray-600 mb-4 leading-relaxed">
-                A passionate wedding content creator based in Northern Ireland,
+                A passionate wedding content creator based in Belfast, Northern Ireland,
                 dedicated to capturing the magic, emotion, and beauty of your
                 special day through raw candid photos and videos.
               </p>
               <p className="text-lg text-gray-600 mb-4 leading-relaxed">
-                With years of experience in content creation across Northern
-                Ireland, I specialise in creating stunning visual stories
+                With years of experience as a wedding content creator in Northern
+                Ireland and Belfast, I specialise in creating stunning visual stories
                 perfect for social media that you&apos;ll treasure forever. From
-                intimate ceremonies to grand celebrations, I&apos;m here to document
+                intimate ceremonies to grand celebrations across NI, I&apos;m here to document
                 every precious moment.
               </p>
               <p className="text-lg text-gray-600 leading-relaxed">
                 My approach is authentic, creative, and focused on capturing the
-                genuine emotions that make your wedding uniquely yours. Serving
-                couples throughout Northern Ireland & ROI.
+                genuine emotions that make your wedding uniquely yours. Proudly serving
+                couples throughout Belfast, Northern Ireland & ROI.
               </p>
             </div>
             <div className="relative h-[500px] bg-gray-200 rounded-lg overflow-hidden shadow-xl">
               <Image
                 src="/aboutme.JPG"
-                alt="Wedding content creator Northern Ireland"
+                alt="Wedding content creator Northern Ireland Belfast - Courtney from CourtCreatives"
                 fill
                 className="object-cover"
               />
