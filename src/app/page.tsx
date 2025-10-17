@@ -363,7 +363,11 @@ const CourtCreativesWebsite = () => {
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="md:hidden p-2 cursor-pointer text-gray-800"
               >
-                {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {isMenuOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
               </button>
             </div>
           </div>
@@ -392,12 +396,14 @@ const CourtCreativesWebsite = () => {
       <section className="pt-32 pb-20 px-4">
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight font-[family-name:var(--font-tangerine)] text-gray-800">
-            Wedding Content Creator <span className="text-[#f8ced0]">Northern Ireland</span>
+            Wedding Content Creator{" "}
+            <span className="text-[#f8ced0]">Northern Ireland</span>
           </h1>
           <p className="text-xl md:text-2xl text-gray-600 mb-8 font-light max-w-3xl mx-auto">
-            Professional wedding content creator serving Belfast, Northern Ireland, and beyond.
-            Specialising in stunning TikTok videos, Instagram reels, and
-            cinematic wedding content that brings your special day to life
+            Professional wedding content creator serving Belfast, Northern
+            Ireland, and beyond. Specialising in stunning TikTok videos,
+            Instagram reels, and cinematic wedding content that brings your
+            special day to life
           </p>
           <button
             onClick={() => scrollToSection("contact")}
@@ -420,21 +426,21 @@ const CourtCreativesWebsite = () => {
                 Hi, I&apos;m Courtney.
               </p>
               <p className="text-lg text-gray-600 mb-4 leading-relaxed">
-                A passionate wedding content creator based in Belfast, Northern Ireland,
-                dedicated to capturing the magic, emotion, and beauty of your
-                special day through raw candid photos and videos.
+                A passionate wedding content creator based in Belfast, Northern
+                Ireland, dedicated to capturing the magic, emotion, and beauty
+                of your special day through raw candid photos and videos.
               </p>
               <p className="text-lg text-gray-600 mb-4 leading-relaxed">
-                With years of experience as a wedding content creator in Northern
-                Ireland and Belfast, I specialise in creating stunning visual stories
-                perfect for social media that you&apos;ll treasure forever. From
-                intimate ceremonies to grand celebrations across NI, I&apos;m here to document
-                every precious moment.
+                As a wedding content creator in Northern Ireland and Belfast, I
+                specialise in creating stunning visual stories perfect for
+                social media that you&apos;ll treasure forever. From intimate
+                ceremonies to grand celebrations across NI, I&apos;m here to
+                document every precious moment.
               </p>
               <p className="text-lg text-gray-600 leading-relaxed">
                 My approach is authentic, creative, and focused on capturing the
-                genuine emotions that make your wedding uniquely yours. Proudly serving
-                couples throughout Belfast, Northern Ireland & ROI.
+                genuine emotions that make your wedding uniquely yours. Proudly
+                serving couples throughout Belfast, Northern Ireland & ROI.
               </p>
             </div>
             <div className="relative h-[500px] bg-gray-200 rounded-lg overflow-hidden shadow-xl">
@@ -862,8 +868,8 @@ const CourtCreativesWebsite = () => {
                 Thank You!
               </h3>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                Your enquiry has been successfully submitted. We&apos;ll get back to
-                you within 24-48 hours.
+                Your enquiry has been successfully submitted. We&apos;ll get
+                back to you within 24-48 hours.
               </p>
               <button
                 onClick={() => setShowSuccessModal(false)}
