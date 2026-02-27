@@ -828,7 +828,7 @@ const CourtCreativesWebsite = () => {
       <footer className="bg-white py-8 px-4 border-t">
         <div className="max-w-6xl mx-auto text-center text-gray-600">
           <p className="font-light">
-            © 2025 CourtCreatives. All rights reserved.
+            © {new Date().getFullYear()} CourtCreatives. All rights reserved.
           </p>
           <p className="mt-2 font-light">
             Creating beautiful wedding memories, one frame at a time
