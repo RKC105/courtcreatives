@@ -3,4 +3,4 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://courtcreativesni.com/sitemap.xml
+Sitemap: https://courtcreatives.co.uk/sitemap.xml
