@@ -72,6 +72,8 @@ public/
 
 It's a **single-page site**. Everything renders from `src/app/page.tsx`, and the nav scrolls between sections rather than routing.
 
+The exceptions are `/privacy-policy` and `/terms-and-conditions` (`src/app/privacy-policy/`, `src/app/terms-and-conditions/`), linked from the footer. They share a shell in `src/components/LegalPage.tsx`. Each sets its own `alternates.canonical`, because otherwise it would inherit the root layout's `"/"` and point its canonical at the homepage. If you change a policy, update its "Last updated" date and its `lastmod` in `sitemap.xml`.
+
 ### Page sections
 
 In order, matching the nav: **Hero → About → Packages → How it works → Gallery → FAQ → Contact → Footer**.

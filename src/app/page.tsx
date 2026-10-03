@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTiktok } from "@fortawesome/free-brands-svg-icons";
+import Link from "next/link";
+import { LegalLinks } from "@/components/LegalPage";
 
 const SITE_URL = "https://courtcreatives.co.uk";
 
@@ -914,6 +916,16 @@ const CourtCreativesWebsite = () => {
                 <Send className="w-5 h-5" />
                 <span>Send Enquiry</span>
               </button>
+              <p className="text-center text-sm text-gray-500 font-light">
+                Your details are only used to reply to your enquiry. See the{" "}
+                <Link
+                  href="/privacy-policy"
+                  className="underline hover:text-rose-400 transition-colors"
+                >
+                  Privacy Policy
+                </Link>
+                .
+              </p>
             </div>
           </div>
 
@@ -949,6 +961,7 @@ const CourtCreativesWebsite = () => {
           <p className="mt-2 font-light">
             Creating beautiful wedding memories, one frame at a time
           </p>
+          <LegalLinks />
         </div>
       </footer>
 
