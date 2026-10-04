@@ -18,7 +18,12 @@ const tangerine = Tangerine({
   weight: ["400", "700"],
 });
 
+// Single source of truth for the canonical host. Everything below resolves
+// against this, so the canonical, OG and Twitter URLs can never drift apart.
+const siteUrl = "https://courtcreatives.co.uk";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Wedding Content Creator Northern Ireland | Belfast Wedding Videographer | CourtCreatives",
   description: "Professional wedding content creator in Northern Ireland & Belfast. Specialising in wedding TikTok, Instagram reels, and cinematic wedding videos. Book your NI wedding content creator today.",
   keywords: [
@@ -50,13 +55,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_GB",
-    url: "https://courtcreativesni.com",
+    url: "/",
     siteName: "CourtCreatives",
     title: "Wedding Content Creator Northern Ireland | Belfast Wedding Videographer",
     description: "Professional wedding content creator in Northern Ireland & Belfast specialising in TikTok, Instagram reels, and cinematic wedding videos.",
     images: [
       {
-        url: "https://courtcreativesni.com/logo.png",
+        url: "/logo.png",
         width: 1200,
         height: 630,
         alt: "CourtCreatives - Wedding Content Creator Northern Ireland",
@@ -67,10 +72,13 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Wedding Content Creator Northern Ireland | Belfast Wedding Videographer",
     description: "Professional wedding content creator in Northern Ireland & Belfast specialising in TikTok, Instagram reels, and cinematic wedding videos.",
-    images: ["https://courtcreativesni.com/logo.png"],
+    images: ["/logo.png"],
   },
   alternates: {
-    canonical: "https://courtcreativesni.com",
+    // Self-referencing canonical, resolved against metadataBase. Next normalises
+    // the root path away, so this renders as exactly `siteUrl` and can never
+    // drift onto a different host from the OG/Twitter URLs above.
+    canonical: "/",
   },
   other: {
     "geo.region": "GB-NIR",
