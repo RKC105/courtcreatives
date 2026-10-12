@@ -1,36 +1,151 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CourtCreatives
 
-## Getting Started
+Marketing website for **CourtCreatives** — Courtney, a wedding content creator based in Belfast, Northern Ireland, specialising in candid TikTok, Instagram Reels and social-first wedding content.
 
-First, run the development server:
+- **Live site:** https://courtcreatives.co.uk (primary domain)
+- **Hosting:** Vercel
+- **Repo:** `origin` → `rkavanagh105work-arch/courtcreatives`, `upstream` → `RKC105/courtcreatives`
+
+---
+
+## Stack
+
+| | |
+|---|---|
+| Framework | Next.js 15.5.9 (App Router) |
+| Runtime | React 19.1 |
+| Language | TypeScript 5 |
+| Styling | Tailwind CSS v4 (via `@tailwindcss/postcss`) |
+| Icons | `lucide-react`, plus FontAwesome brand icons for TikTok |
+| Email | [Resend](https://resend.com) |
+| Fonts | Geist, Geist Mono, Tangerine — all via `next/font/google` |
+
+Next.js 15 requires Node 18.18 or newer.
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Does |
+|---|---|
+| `npm run dev` | Dev server |
+| `npm run build` | Production build |
+| `npm run start` | Serve the production build |
+| `npm run lint` | ESLint (flat config, `eslint.config.mjs`) |
 
-## Learn More
+### Environment variables
 
-To learn more about Next.js, take a look at the following resources:
+Create `.env.local` in the project root:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+RESEND_API_KEY=re_xxxxxxxxxxxx
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This is the only environment variable the app uses. Without it the enquiry form returns a 500. `.env*` is gitignored — the key also needs to be set in the Vercel project settings for the deployed site.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/app/
+  layout.tsx              Root layout, fonts, all page metadata / SEO tags
+  robots.ts               Generates /robots.txt (blocks crawling on Vercel previews)
+  sitemap.ts              Generates /sitemap.xml — bump `lastModified` when content changes
+  page.tsx                The entire site — one client component
+  globals.css             Tailwind import + theme tokens
+  api/submit-form/route.ts  POST handler: enquiry form → email
+public/
+  logo.png                Site logo + OG/Twitter share image
+  logo_withbg.png         Logo used inside the enquiry email template
+  aboutme.JPG             About section portrait
+  packages.png            Original packages graphic — no longer used; contents now live in the `packages` array in page.tsx
+  vid1–6.mp4              Gallery videos
+src/lib/site.ts           Canonical URL, business name, email and social profiles
+```
+
+It's a **single-page site**. Everything renders from `src/app/page.tsx`, and the nav scrolls between sections rather than routing.
+
+The exceptions are `/privacy-policy` and `/terms-and-conditions` (`src/app/privacy-policy/`, `src/app/terms-and-conditions/`), linked from the footer. They share a shell in `src/components/LegalPage.tsx`. Each sets its own `alternates.canonical`, because otherwise it would inherit the root layout's `"/"` and point its canonical at the homepage. If you change a policy, update its "Last updated" date and its `lastModified` in `src/app/sitemap.ts`.
+
+### Page sections
+
+In order, matching the nav: **Hero → About → Packages → How it works → Gallery → FAQ → Contact → Footer**.
+
+The nav derives each section's anchor from its label by lowercasing it and replacing spaces with hyphens, so a nav label of `"FAQ"` targets `id="faq"` and `"How it works"` targets `id="how-it-works"`. **Adding a nav item means adding a section with the matching `id`.** The label list is duplicated in the desktop and mobile menus — change both.
+
+### Design tokens
+
+Hardcoded as Tailwind arbitrary values throughout, not theme config:
+
+| Colour | Use |
+|---|---|
+| `#fff6f3` | Page background, cards on white sections |
+| `#f8ced0` | Primary pink — buttons, icons, accents |
+| `#f5b8bb` | Button hover |
+
+Headings use Tangerine, a script face, via `font-[family-name:var(--font-tangerine)]`. Sections alternate between the `#fff6f3` page background and `bg-white`.
+
+---
+
+## Enquiry form
+
+The contact form posts JSON to `POST /api/submit-form`, which renders an HTML email and sends it through Resend to **courtcreatives@outlook.com**.
+
+Required fields (validated client-side): full name, email, wedding date, getting-ready location, ceremony location, reception location. The wedding date is also checked against today so past dates are rejected, and the `<input type="date">` `min` is set on mount. On success the page shows a modal; failures surface via `alert()`.
+
+---
+
+## SEO
+
+This site is a single page competing on local search terms, so the SEO setup carries real weight.
+
+**`src/lib/site.ts`** holds the canonical URL and business identity. The layout metadata, the homepage JSON-LD, `robots.ts` and `sitemap.ts` all read from it, so they can't drift onto different hosts or names.
+
+**`src/app/layout.tsx`** owns all head metadata via the Next.js Metadata API: `metadataBase`, the canonical, OpenGraph and Twitter tags, and `lang="en-GB"`. The share image is the square logo, so it uses a `summary` card. A purpose-made 1200×630 image would allow `summary_large_image`.
+
+**`src/app/page.tsx`** renders three JSON-LD blocks directly into the markup (not injected client-side, so crawlers see them without executing JavaScript):
+
+- `ProfessionalService`: business details. There's no `geo` and no street address because Courtney travels to couples and there's no public premises. `areaServed` comes from the `areasServed` object, which mirrors the areas named in the first two FAQ answers.
+- `WebSite`: the site name, linked to the business by `@id`
+- `FAQPage`: generated from the `faqs` array. Google no longer shows FAQ rich results for sites like this, so the markup is descriptive only. The visible FAQ is what matters.
+
+Structured data must describe what's visible on the page. If you add an area to `areasServed`, mention it in the FAQ copy too.
+
+**`src/app/robots.ts`** allows everything on production and disallows all crawling when `VERCEL_ENV` is `preview` or `development`. **`src/app/sitemap.ts`** lists the three pages with hand-maintained `lastModified` dates. It leaves out `priority`/`changefreq` because Google ignores them.
+
+**`next.config.ts`** permanently redirects `www.courtcreatives.co.uk` → apex, and sets an `X-Robots-Tag: index, follow` header.
+
+### Canonical domain — background
+
+The site previously declared `courtcreativesni.com` as its canonical URL across the metadata, structured data, `robots.txt` and `sitemap.xml`. That domain isn't live. Search engines were being told the real page lived at a host that doesn't resolve, which is why audits reported *"the canonical link points to a different domain."*
+
+Fixed by moving everything onto `courtcreatives.co.uk`. Two things to keep in mind:
+
+1. If the domain ever changes again, update `site.url` in `src/lib/site.ts` and the redirect host in `next.config.ts`.
+2. Next.js normalises the root trailing slash away, so the canonical renders as `https://courtcreatives.co.uk` with no trailing slash regardless of whether you write `"/"` or the full URL. This is fine — Google treats the two as identical.
+
+---
+
+## Known wrinkles
+
+Things that are odd but currently harmless, noted so they don't cause confusion later:
+
+- **Resend sends from `onboarding@resend.dev`**, Resend's shared sandbox sender. Enquiries deliver, but moving to a verified sending domain would improve deliverability and stop the emails looking third-party.
+- **The comment above the form submit in `page.tsx` says "Submit to JotForm API".** It's stale — the endpoint uses Resend. JotForm isn't a dependency.
+- **The enquiry email template hardcodes `© 2025`** in its footer, while the site footer uses the current year.
+- **`public/vid7.mp4` and `public/process.png` are unreferenced.** The gallery only uses `vid1`–`vid6`.
+- **`globals.css` defines a `prefers-color-scheme: dark` block** setting a near-black body background. It's effectively inert — the page root applies `bg-[#fff6f3]` with `min-h-screen` over it — but the site has no real dark mode.
+- **Package contents live in the `packages` array in `page.tsx`**, transcribed from `public/packages.png` (now unused). Prices aren't published anywhere on the site.
+- **`sitemap.xml` is static.** Its `lastmod` needs bumping manually when content changes meaningfully.
+
+## Deploying
+
+Pushing to `main` deploys via Vercel. Confirm in Vercel → Domains that `courtcreatives.co.uk` remains the primary domain with `www` redirecting to it, since the canonical tag and the `next.config.ts` redirect both assume apex is canonical.
