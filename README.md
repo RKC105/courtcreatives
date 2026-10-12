@@ -57,6 +57,8 @@ This is the only environment variable the app uses. Without it the enquiry form 
 ```
 src/app/
   layout.tsx              Root layout, fonts, all page metadata / SEO tags
+  robots.ts               Generates /robots.txt (blocks crawling on Vercel previews)
+  sitemap.ts              Generates /sitemap.xml — bump `lastModified` when content changes
   page.tsx                The entire site — one client component
   globals.css             Tailwind import + theme tokens
   api/submit-form/route.ts  POST handler: enquiry form → email
@@ -64,21 +66,20 @@ public/
   logo.png                Site logo + OG/Twitter share image
   logo_withbg.png         Logo used inside the enquiry email template
   aboutme.JPG             About section portrait
-  packages.png            Packages section (pricing is an image, not markup)
+  packages.png            Original packages graphic — no longer used; contents now live in the `packages` array in page.tsx
   vid1–6.mp4              Gallery videos
-  robots.txt              Static
-  sitemap.xml             Static — update `lastmod` when content changes
+src/lib/site.ts           Canonical URL, business name, email and social profiles
 ```
 
 It's a **single-page site**. Everything renders from `src/app/page.tsx`, and the nav scrolls between sections rather than routing.
 
-The exceptions are `/privacy-policy` and `/terms-and-conditions` (`src/app/privacy-policy/`, `src/app/terms-and-conditions/`), linked from the footer. They share a shell in `src/components/LegalPage.tsx`. Each sets its own `alternates.canonical`, because otherwise it would inherit the root layout's `"/"` and point its canonical at the homepage. If you change a policy, update its "Last updated" date and its `lastmod` in `sitemap.xml`.
+The exceptions are `/privacy-policy` and `/terms-and-conditions` (`src/app/privacy-policy/`, `src/app/terms-and-conditions/`), linked from the footer. They share a shell in `src/components/LegalPage.tsx`. Each sets its own `alternates.canonical`, because otherwise it would inherit the root layout's `"/"` and point its canonical at the homepage. If you change a policy, update its "Last updated" date and its `lastModified` in `src/app/sitemap.ts`.
 
 ### Page sections
 
 In order, matching the nav: **Hero → About → Packages → How it works → Gallery → FAQ → Contact → Footer**.
 
-The nav derives each section's anchor from its label via `item.toLowerCase()`, so a nav label of `"FAQ"` targets `id="faq"` and `"How it works"` targets `id="how it works"`. **Adding a nav item means adding a section with the matching lowercased `id`.** The label list is duplicated in the desktop and mobile menus — change both.
+The nav derives each section's anchor from its label by lowercasing it and replacing spaces with hyphens, so a nav label of `"FAQ"` targets `id="faq"` and `"How it works"` targets `id="how-it-works"`. **Adding a nav item means adding a section with the matching `id`.** The label list is duplicated in the desktop and mobile menus — change both.
 
 ### Design tokens
 
@@ -106,14 +107,19 @@ Required fields (validated client-side): full name, email, wedding date, getting
 
 This site is a single page competing on local search terms, so the SEO setup carries real weight.
 
-**`src/app/layout.tsx`** owns all head metadata via the Next.js Metadata API. A single `siteUrl` constant at the top of the file feeds `metadataBase`, the canonical, OpenGraph and Twitter tags — so they can't drift onto different hosts. It also sets `geo.region` / `geo.placename` / `geo.position` for local search.
+**`src/lib/site.ts`** holds the canonical URL and business identity. The layout metadata, the homepage JSON-LD, `robots.ts` and `sitemap.ts` all read from it, so they can't drift onto different hosts or names.
 
-**`src/app/page.tsx`** renders two JSON-LD blocks directly into the markup (not injected client-side, so crawlers see them without executing JavaScript):
+**`src/app/layout.tsx`** owns all head metadata via the Next.js Metadata API: `metadataBase`, the canonical, OpenGraph and Twitter tags, and `lang="en-GB"`. The share image is the square logo, so it uses a `summary` card. A purpose-made 1200×630 image would allow `summary_large_image`.
 
-- `ProfessionalService` — business details, with `areaServed` generated from the `areasServed` array
-- `FAQPage` — generated from the `faqs` array, making the questions eligible for expandable FAQ rich results
+**`src/app/page.tsx`** renders three JSON-LD blocks directly into the markup (not injected client-side, so crawlers see them without executing JavaScript):
 
-The FAQ section and its "Areas I Cover" panel are both driven by those two arrays, which double as the structured-data source. Editing an FAQ answer or adding a town updates the visible page *and* the schema together. The area list covers all six NI counties plus the Republic of Ireland, and exists largely so those town and venue names are crawlable text on the page.
+- `ProfessionalService`: business details. There's no `geo` and no street address because Courtney travels to couples and there's no public premises. `areaServed` comes from the `areasServed` object, which mirrors the areas named in the first two FAQ answers.
+- `WebSite`: the site name, linked to the business by `@id`
+- `FAQPage`: generated from the `faqs` array. Google no longer shows FAQ rich results for sites like this, so the markup is descriptive only. The visible FAQ is what matters.
+
+Structured data must describe what's visible on the page. If you add an area to `areasServed`, mention it in the FAQ copy too.
+
+**`src/app/robots.ts`** allows everything on production and disallows all crawling when `VERCEL_ENV` is `preview` or `development`. **`src/app/sitemap.ts`** lists the three pages with hand-maintained `lastModified` dates. It leaves out `priority`/`changefreq` because Google ignores them.
 
 **`next.config.ts`** permanently redirects `www.courtcreatives.co.uk` → apex, and sets an `X-Robots-Tag: index, follow` header.
 
@@ -123,7 +129,7 @@ The site previously declared `courtcreativesni.com` as its canonical URL across 
 
 Fixed by moving everything onto `courtcreatives.co.uk`. Two things to keep in mind:
 
-1. **`siteUrl` in `layout.tsx` and `SITE_URL` in `page.tsx` are separate constants holding the same value.** They're split because `layout.tsx` is a server component and `page.tsx` is a client component. If the domain ever changes again, both need updating — along with `public/robots.txt`, `public/sitemap.xml` and the redirect host in `next.config.ts`.
+1. If the domain ever changes again, update `site.url` in `src/lib/site.ts` and the redirect host in `next.config.ts`.
 2. Next.js normalises the root trailing slash away, so the canonical renders as `https://courtcreatives.co.uk` with no trailing slash regardless of whether you write `"/"` or the full URL. This is fine — Google treats the two as identical.
 
 ---
@@ -137,7 +143,7 @@ Things that are odd but currently harmless, noted so they don't cause confusion 
 - **The enquiry email template hardcodes `© 2025`** in its footer, while the site footer uses the current year.
 - **`public/vid7.mp4` and `public/process.png` are unreferenced.** The gallery only uses `vid1`–`vid6`.
 - **`globals.css` defines a `prefers-color-scheme: dark` block** setting a near-black body background. It's effectively inert — the page root applies `bg-[#fff6f3]` with `min-h-screen` over it — but the site has no real dark mode.
-- **Pricing lives inside `public/packages.png`**, so package changes mean re-exporting that image rather than editing markup. Prices aren't crawlable text.
+- **Package contents live in the `packages` array in `page.tsx`**, transcribed from `public/packages.png` (now unused). Prices aren't published anywhere on the site.
 - **`sitemap.xml` is static.** Its `lastmod` needs bumping manually when content changes meaningfully.
 
 ## Deploying

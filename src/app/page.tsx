@@ -13,71 +13,67 @@ import {
   Phone,
   Calendar,
   ChevronDown,
-  MapPin,
 } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTiktok } from "@fortawesome/free-brands-svg-icons";
 import Link from "next/link";
 import { LegalLinks } from "@/components/LegalPage";
+import { site } from "@/lib/site";
 
-const SITE_URL = "https://courtcreatives.co.uk";
+// Areas covered, as stated in the first two FAQ answers. Structured data must
+// describe what's visible on the page, so "areaServed" is built from this list
+// rather than a longer list of towns that never appear in the copy. If you add
+// an area here, mention it in the FAQ text too.
+const areasServed = {
+  northernIreland: [
+    "County Antrim",
+    "County Armagh",
+    "County Down",
+    "County Fermanagh",
+    "County Londonderry",
+    "County Tyrone",
+  ],
+  republicOfIreland: [
+    "County Donegal",
+    "County Monaghan",
+    "County Cavan",
+    "County Louth",
+    "County Sligo",
+    "Dublin",
+  ],
+};
 
-// Areas covered, grouped by county. Doubles as the source for the "areaServed"
-// entries in the structured data below.
-const areasServed = [
+// Package contents, transcribed from the original packages graphic so they're
+// readable by search engines and screen readers rather than locked in an image.
+const packages = [
   {
-    county: "County Antrim",
-    places: [
-      "Belfast",
-      "Lisburn",
-      "Ballymena",
-      "Antrim",
-      "Carrickfergus",
-      "Larne",
-      "Ballycastle",
-      "Bushmills",
-      "Portrush",
+    name: "The Classic",
+    includes: [
+      "Capturing moments of bridal prep and ceremony",
+      "Gallery of raw video clips and stills",
+      "Content delivered within 24 hours",
+      "Up to 3 edited short videos for your social media platforms",
     ],
   },
   {
-    county: "County Down",
-    places: [
-      "Bangor",
-      "Newtownards",
-      "Holywood",
-      "Hillsborough",
-      "Comber",
-      "Downpatrick",
-      "Newcastle",
-      "Newry",
+    name: "The Prestige",
+    includes: [
+      "Capturing footage of bridal prep, ceremony and drinks reception",
+      "Gallery of raw video clips and stills",
+      "Content delivered within 24–48 hours",
+      "One 2–3 minute highlight film",
+      "Up to 5 edited videos to post",
     ],
   },
   {
-    county: "County Armagh",
-    places: ["Armagh", "Portadown", "Lurgan", "Craigavon", "Markethill"],
-  },
-  {
-    county: "County Londonderry",
-    places: [
-      "Derry~Londonderry",
-      "Coleraine",
-      "Portstewart",
-      "Limavady",
-      "Magherafelt",
-      "Castledawson",
+    name: "The Luxe",
+    includes: [
+      "Full day: wedding morning with bridal party, ceremony, speeches, dinner and evening",
+      "Gallery of raw video clips and stills",
+      "Content delivered within 24–48 hours",
+      "One 3–5 minute highlight film",
+      "Up to 8 videos to post",
     ],
-  },
-  {
-    county: "County Tyrone",
-    places: ["Omagh", "Cookstown", "Dungannon", "Strabane", "Ballygawley"],
-  },
-  {
-    county: "County Fermanagh",
-    places: ["Enniskillen", "Lough Erne", "Lisnaskea", "Irvinestown"],
-  },
-  {
-    county: "Republic of Ireland",
-    places: ["Donegal", "Monaghan", "Cavan", "Louth", "Sligo", "Dublin"],
   },
 ];
 
@@ -138,51 +134,61 @@ const faqs = [
 const professionalServiceSchema = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
-  "@id": `${SITE_URL}/#business`,
-  name: "CourtCreatives",
+  "@id": `${site.url}/#business`,
+  name: site.name,
   alternateName: "Court Creatives Wedding Content Creator",
   description:
-    "Professional wedding content creator in Northern Ireland and Belfast specialising in TikTok, Instagram reels, and cinematic wedding videos",
-  url: SITE_URL,
-  logo: `${SITE_URL}/logo.png`,
-  image: `${SITE_URL}/logo.png`,
+    "Wedding content creator based in Belfast, covering Northern Ireland and the Republic of Ireland. Candid, behind-the-scenes TikToks, Instagram Reels and stills, delivered within 24–48 hours.",
+  url: site.url,
+  logo: `${site.url}/logo.png`,
+  image: `${site.url}/aboutme.JPG`,
+  // A service-area business with no public premises, so only the town is
+  // given and there's no "geo" — coordinates would imply a studio address.
   address: {
     "@type": "PostalAddress",
     addressLocality: "Belfast",
     addressRegion: "Northern Ireland",
     addressCountry: "GB",
   },
-  geo: {
-    "@type": "GeoCoordinates",
-    latitude: "54.5973",
-    longitude: "-5.9301",
-  },
-  sameAs: [
-    "https://www.instagram.com/courtcreatives_/",
-    "https://www.tiktok.com/@courtcreatives_",
-  ],
-  priceRange: "££",
+  sameAs: site.sameAs,
   areaServed: [
+    { "@type": "City", name: "Belfast" },
     { "@type": "AdministrativeArea", name: "Northern Ireland" },
-    { "@type": "Country", name: "Ireland" },
-    ...areasServed.flatMap((group) =>
-      group.places.map((place) => ({ "@type": "City", name: place }))
-    ),
+    ...areasServed.northernIreland.map((name) => ({
+      "@type": "AdministrativeArea",
+      name,
+    })),
+    ...areasServed.republicOfIreland.map((name) => ({
+      "@type": "AdministrativeArea",
+      name,
+    })),
   ],
   serviceType: [
     "Wedding Content Creation",
     "Wedding Content Creator",
-    "Wedding Videography",
     "Social Media Content",
     "TikTok Videos",
     "Instagram Reels",
   ],
 };
 
+// States the site name for Google's site-name feature and ties the site to the
+// business entity above.
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${site.url}/#website`,
+  name: site.name,
+  url: site.url,
+  publisher: { "@id": `${site.url}/#business` },
+};
+
+// Describes the visible FAQ. Google no longer shows FAQ rich results for
+// sites like this, so this is descriptive markup only.
 const faqSchema = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  "@id": `${SITE_URL}/#faq`,
+  "@id": `${site.url}/#faq`,
   mainEntity: faqs.map((faq) => ({
     "@type": "Question",
     name: faq.question,
@@ -346,16 +352,15 @@ const CourtCreativesWebsite = () => {
     <div className="min-h-screen bg-[#fff6f3] font-sans">
       {/* Structured data — rendered into the markup so crawlers pick it up
           without having to execute JavaScript */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(professionalServiceSchema),
-        }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
+      {[professionalServiceSchema, websiteSchema, faqSchema].map((schema) => (
+        <script
+          key={schema["@id"]}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(schema).replace(/</g, "\\u003c"),
+          }}
+        />
+      ))}
 
       {/* Navigation */}
       <nav className="fixed w-full bg-[#fff6f3]/95 backdrop-blur-sm shadow-sm z-50">
@@ -385,7 +390,7 @@ const CourtCreativesWebsite = () => {
                 ].map((item) => (
                   <button
                     key={item}
-                    onClick={() => scrollToSection(item.toLowerCase())}
+                    onClick={() => scrollToSection(item.toLowerCase().replace(/ /g, "-"))}
                     className="text-gray-700 hover:text-rose-400 transition-colors duration-300 font-light tracking-wide cursor-pointer"
                   >
                     {item}
@@ -398,6 +403,7 @@ const CourtCreativesWebsite = () => {
                   href="https://www.instagram.com/courtcreatives_/"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="CourtCreatives on Instagram"
                   className="text-gray-700 hover:text-rose-400 transition-colors cursor-pointer"
                 >
                   <Instagram className="w-5 h-5" />
@@ -406,6 +412,7 @@ const CourtCreativesWebsite = () => {
                   href="https://www.tiktok.com/@courtcreatives_"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="CourtCreatives on TikTok"
                   className="text-gray-700 hover:text-rose-400 transition-colors cursor-pointer"
                 >
                   <FontAwesomeIcon icon={faTiktok} className="w-5 h-5" />
@@ -414,6 +421,8 @@ const CourtCreativesWebsite = () => {
 
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
+                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={isMenuOpen}
                 className="md:hidden p-2 cursor-pointer text-gray-800"
               >
                 {isMenuOpen ? (
@@ -440,7 +449,7 @@ const CourtCreativesWebsite = () => {
                 (item) => (
                   <button
                     key={item}
-                    onClick={() => scrollToSection(item.toLowerCase())}
+                    onClick={() => scrollToSection(item.toLowerCase().replace(/ /g, "-"))}
                     className="block w-full text-left text-gray-700 hover:text-[#f8ced0] transition-colors cursor-pointer"
                   >
                     {item}
@@ -506,8 +515,9 @@ const CourtCreativesWebsite = () => {
             <div className="relative h-[500px] bg-gray-200 rounded-lg overflow-hidden shadow-xl">
               <Image
                 src="/aboutme.JPG"
-                alt="Wedding content creator Northern Ireland Belfast - Courtney from CourtCreatives"
+                alt="Courtney, wedding content creator at CourtCreatives"
                 fill
+                sizes="(min-width: 640px) 50vw, 100vw"
                 className="object-cover"
               />
             </div>
@@ -521,14 +531,28 @@ const CourtCreativesWebsite = () => {
           <h2 className="text-4xl md:text-7xl font-bold text-center mb-16 font-[family-name:var(--font-tangerine)] text-gray-800">
             Packages
           </h2>
-          <div className="flex justify-center">
-            <Image
-              src="/packages.png"
-              alt="Wedding Packages"
-              width={1024}
-              height={768}
-              className="w-full max-w-4xl h-auto"
-            />
+          <div className="grid gap-6 md:grid-cols-3 max-w-5xl mx-auto">
+            {packages.map((pkg) => (
+              <article
+                key={pkg.name}
+                className="bg-white p-6 md:p-8 rounded-lg shadow-lg flex flex-col"
+              >
+                <h3 className="text-4xl md:text-5xl text-center text-gray-800 mb-6 font-[family-name:var(--font-tangerine)]">
+                  {pkg.name}
+                </h3>
+                <ul className="space-y-3 text-gray-600 leading-relaxed">
+                  {pkg.includes.map((item) => (
+                    <li key={item} className="flex gap-3">
+                      <span
+                        aria-hidden="true"
+                        className="mt-2.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#f8ced0]"
+                      />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            ))}
           </div>
           <div className="mt-12 text-center space-y-2">
             <p className="text-gray-700 font-light text-sm">
@@ -543,7 +567,7 @@ const CourtCreativesWebsite = () => {
       </section>
 
       {/* How it works Section */}
-      <section id="how it works" className="py-20 px-4 bg-white">
+      <section id="how-it-works" className="py-20 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl md:text-7xl font-bold text-center mb-12 font-[family-name:var(--font-tangerine)] text-gray-800">
             How it works
@@ -744,21 +768,22 @@ const CourtCreativesWebsite = () => {
                   key={faq.question}
                   className="bg-[#fff6f3] rounded-lg shadow-lg overflow-hidden"
                 >
-                  <button
-                    onClick={() => setOpenFaq(isOpen ? null : index)}
-                    aria-expanded={isOpen}
-                    aria-controls={`faq-answer-${index}`}
-                    className="w-full flex items-center justify-between gap-4 text-left p-5 md:p-6 cursor-pointer"
-                  >
-                    <h3 className="text-base md:text-xl text-gray-800 font-normal">
-                      {faq.question}
-                    </h3>
-                    <ChevronDown
-                      className={`w-5 h-5 flex-shrink-0 text-[#f8ced0] transition-transform duration-300 ${
-                        isOpen ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
+                  <h3 className="text-base md:text-xl text-gray-800 font-normal">
+                    <button
+                      onClick={() => setOpenFaq(isOpen ? null : index)}
+                      aria-expanded={isOpen}
+                      aria-controls={`faq-answer-${index}`}
+                      className="w-full flex items-center justify-between gap-4 text-left p-5 md:p-6 cursor-pointer"
+                    >
+                      <span>{faq.question}</span>
+                      <ChevronDown
+                        aria-hidden="true"
+                        className={`w-5 h-5 flex-shrink-0 text-[#f8ced0] transition-transform duration-300 ${
+                          isOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                  </h3>
                   <div
                     id={`faq-answer-${index}`}
                     className={`grid transition-all duration-300 ease-in-out ${
@@ -792,12 +817,14 @@ const CourtCreativesWebsite = () => {
             <div className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-gray-700 mb-2 font-normal">
+                  <label htmlFor="fullName" className="block text-gray-700 mb-2 font-normal">
                     Full Name *
                   </label>
                   <input
                     type="text"
+                    id="fullName"
                     name="fullName"
+                    autoComplete="name"
                     value={formData.fullName}
                     onChange={handleChange}
                     required
@@ -805,11 +832,12 @@ const CourtCreativesWebsite = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-700 mb-2 font-normal">
+                  <label htmlFor="partnerName" className="block text-gray-700 mb-2 font-normal">
                     Partner&apos;s Name
                   </label>
                   <input
                     type="text"
+                    id="partnerName"
                     name="partnerName"
                     value={formData.partnerName}
                     onChange={handleChange}
@@ -819,12 +847,14 @@ const CourtCreativesWebsite = () => {
               </div>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-gray-700 mb-2 font-normal">
+                  <label htmlFor="email" className="block text-gray-700 mb-2 font-normal">
                     Email Address *
                   </label>
                   <input
                     type="email"
+                    id="email"
                     name="email"
+                    autoComplete="email"
                     value={formData.email}
                     onChange={handleChange}
                     required
@@ -832,12 +862,14 @@ const CourtCreativesWebsite = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-700 mb-2 font-normal">
+                  <label htmlFor="phone" className="block text-gray-700 mb-2 font-normal">
                     Phone Number
                   </label>
                   <input
                     type="tel"
+                    id="phone"
                     name="phone"
+                    autoComplete="tel"
                     value={formData.phone}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-rose-400 transition-colors"
@@ -845,11 +877,12 @@ const CourtCreativesWebsite = () => {
                 </div>
               </div>
               <div>
-                <label className="block text-gray-700 mb-2 font-normal">
+                <label htmlFor="weddingDate" className="block text-gray-700 mb-2 font-normal">
                   Wedding Date *
                 </label>
                 <input
                   type="date"
+                  id="weddingDate"
                   name="weddingDate"
                   value={formData.weddingDate}
                   onChange={handleChange}
@@ -859,11 +892,12 @@ const CourtCreativesWebsite = () => {
                 />
               </div>
               <div>
-                <label className="block text-gray-700 mb-2 font-normal">
+                <label htmlFor="gettingReadyLocation" className="block text-gray-700 mb-2 font-normal">
                   Location of Where You Will Be Getting Ready *
                 </label>
                 <input
                   type="text"
+                  id="gettingReadyLocation"
                   name="gettingReadyLocation"
                   value={formData.gettingReadyLocation}
                   onChange={handleChange}
@@ -872,11 +906,12 @@ const CourtCreativesWebsite = () => {
                 />
               </div>
               <div>
-                <label className="block text-gray-700 mb-2 font-normal">
+                <label htmlFor="ceremonyLocation" className="block text-gray-700 mb-2 font-normal">
                   Ceremony Location *
                 </label>
                 <input
                   type="text"
+                  id="ceremonyLocation"
                   name="ceremonyLocation"
                   value={formData.ceremonyLocation}
                   onChange={handleChange}
@@ -885,11 +920,12 @@ const CourtCreativesWebsite = () => {
                 />
               </div>
               <div>
-                <label className="block text-gray-700 mb-2 font-normal">
+                <label htmlFor="receptionLocation" className="block text-gray-700 mb-2 font-normal">
                   Reception Location *
                 </label>
                 <input
                   type="text"
+                  id="receptionLocation"
                   name="receptionLocation"
                   value={formData.receptionLocation}
                   onChange={handleChange}
@@ -898,10 +934,11 @@ const CourtCreativesWebsite = () => {
                 />
               </div>
               <div>
-                <label className="block text-gray-700 mb-2 font-normal">
+                <label htmlFor="additionalDetails" className="block text-gray-700 mb-2 font-normal">
                   Additional Details or Requests
                 </label>
                 <textarea
+                  id="additionalDetails"
                   name="additionalDetails"
                   value={formData.additionalDetails}
                   onChange={handleChange}
@@ -968,6 +1005,7 @@ const CourtCreativesWebsite = () => {
       {/* Floating Chat Button */}
       <button
         onClick={() => scrollToSection("contact")}
+        aria-label="Send an enquiry"
         className="fixed bottom-6 right-6 bg-[#f8ced0] text-white font-semibold p-4 rounded-full shadow-2xl hover:bg-[#f5b8bb] transition-all duration-300 hover:scale-110 z-50 cursor-pointer"
       >
         <MessageCircle className="w-6 h-6" />
